@@ -6,8 +6,17 @@ from cf import cf
 class acmer:
 
     def __init__(self):
-        conn=MySQLdb.connect(host='localhost',user='root',passwd='000000',db='acm_lab')
+        conn=MySQLdb.connect(host='localhost',user='root',passwd='000000')
         cur=conn.cursor()
+        try:
+            conn.select_db('acm_lab')
+        except:
+            sql = 'create database acm_lab'
+            cur.execute(sql)
+            conn.select_db('acm_lab')
+            cur = conn.cursor()
+            sql = "create table acmer(id int not null primary key, name varchar(255) default '', poj_name varchar(255) default '', poj_solved int default 0, hdoj_name varchar(255) default '', hdoj_solved int default 0, cf_name varchar(255) default '', cf_rating int default 0, photo_url varchar(255) default '/var/www/photo/default.png')"
+            cur.execute(sql)
         self.conn = conn
         self.cur = cur
 
