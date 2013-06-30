@@ -2,6 +2,7 @@ import MySQLdb
 from poj import poj
 from hdoj import hdoj
 from cf import cf
+import time
 
 class acmer:
 
@@ -49,7 +50,7 @@ class acmer:
     def update_cf(self):
         sql = 'select id, cf_name from acmer'
         self.cur.execute(sql)
-        results=self.cur.fetchall()
+        results = self.cur.fetchall()
         c = cf()
         solved_id = []
         for line in results:
@@ -59,17 +60,40 @@ class acmer:
         self.conn.commit()
         print solved_id
 
+    def update_sum(self):
+        sql = 'select id, poj_solved, hdoj_solved from acmer'
+        self.cur.execute(sql)
+        results = self.cur.fetchall()
+        #day29 = int(time().time/86400) % 30
+        day29 = 10
+        day0 = (day29+1) % 30
+        for line in results:
+            sum_solved = line[1] + line[2]
+            sql = 'update sum_solved set day%s=%s where id=%s' % (day29, sum_solved, line[0])
+            self.cur.execute(sql)
+            self.conn.commit()
+            sql = 'select * from sum_solved where id=%s' % line[0]
+            self.cur.execute(sql)
+            r = self.cur.fetchone()
+            print r
+            days = ''
+            for i in range(0, 30):
+                days += str(r[(day0+i)%30+1]-r[day0+1]) 
+                if i != 29:
+                    days += ','
+            print days
+            sql = 'update acmer set sum_solved="%s" where id=%s' % (days, line[0])
+            self.cur.execute(sql)
+            self.conn.commit()
+
     def update_all(self):
         self.update_poj()
         self.update_hdoj()
         self.update_cf()
+        self.update_sum()
 
     def __del__(self):
         self.cur.close()
         self.conn.close()
-
-
-
-
 
 
