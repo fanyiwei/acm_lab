@@ -64,8 +64,9 @@ class acmer:
         sql = 'select id, poj_solved, hdoj_solved from acmer'
         self.cur.execute(sql)
         results = self.cur.fetchall()
-        #day29 = int(time().time/86400) % 30
-        day29 = 10
+        a = int(time.time() / 86400)
+        day29 = a % 30
+        print day29
         day0 = (day29+1) % 30
         for line in results:
             sum_solved = line[1] + line[2]
@@ -75,7 +76,6 @@ class acmer:
             sql = 'select * from sum_solved where id=%s' % line[0]
             self.cur.execute(sql)
             r = self.cur.fetchone()
-            print r
             days = ''
             for i in range(0, 30):
                 days += str(r[(day0+i)%30+1]-r[day0+1]) 
