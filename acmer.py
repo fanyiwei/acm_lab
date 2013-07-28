@@ -79,6 +79,9 @@ class acmer:
             days = []
             for i in range(0, 30):
                 days.append(r[(day0+i)%30+1]-r[day0+1]) 
+            for i in range(2, 30):
+                if days[i] < days[i-1]:
+                    days[i] = days[i-1]
             print days
             result = ''
             for i in range(2, 30):
@@ -86,6 +89,8 @@ class acmer:
                 if i != 29:
                     result += ','
             print result
+            sql = 'update acmer set sum30="%s" where id="%s"' % (days[29]-days[1], line[0])
+            self.cur.execute(sql)
             sql = 'update acmer set sum_solved="%s" where id=%s' % (result, line[0])
             self.cur.execute(sql)
             self.conn.commit()
